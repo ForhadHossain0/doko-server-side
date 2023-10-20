@@ -38,7 +38,7 @@ async function run() {
         const newProduct = req.body;
         console.log(newProduct)
         const result = await MYdatabase.insertOne(newProduct);
-        res.send(result ) 
+        res.send(result) 
       })
 
 
