@@ -25,13 +25,15 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
-    const MYdatabase = client.db('dokoDB').collection('products') 
+    const MYdatabase = client.db('dokoDB').collection('products') ;
+    const MYusers = client.db('dokoDB').collection('user')
+    // const MYusers = client.db('dokoDB').collection('user')
+
 
     app.get('/products', async(req,res)=>{
         const cursor = MYdatabase.find();
-        const result = await cursor.toArray();
+        const result = await cursor.toArray(); 
         res.send(result)
-
     })
 
     app.post('/products', async (req,res)=> {
@@ -78,6 +80,42 @@ async function run() {
         const result = await MYdatabase.deleteOne(query);
         res.send(result)
       })
+
+
+      //user details
+
+    app.get('/users', async(req,res)=>{
+        const cursor = MYusers.find();
+        const result = await cursor.toArray(); 
+        res.send(result)
+    }) 
+
+    app.patch('/users',async(req,res)=>{
+      const user = req.body
+      const query = {email: user.email};
+      const UpdateUser = {
+        $set:{
+          loginTime : user.loginTime
+        }
+      }
+      const result = await MYusers.updateOne(query,UpdateUser)
+      res.send(result)
+    })
+      
+    app.post('/users', async (req,res)=> {
+      const newUser = req.body;
+      console.log(newUser)
+      const result = await MYusers.insertOne(newUser);
+      res.send(result) 
+    })
+  
+    app.delete('/users/:id',async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const result = await MYusers.deleteOne(query);
+      res.send(result)
+    })
+
 
 
     // Send a ping to confirm a successful connection
